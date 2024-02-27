@@ -2,8 +2,9 @@ import streamlit as st
 import json
 import requests
 
-def search(query,c_name):
-    URL = "http://localhost:8000/search/"
+URL = st.secrets["API_URL"]
+
+def search(query,c_name):    
     DATA = {
             "query": query,
             "index_name": c_name
