@@ -6,9 +6,10 @@ class Rutas:
         #self.df_rutas = gpd.read_file(path_rutas)
         #self.df_rutas_paradas = gpd.read_file(path_rutas_paradas)
         #self.df_base = pd.read_csv("data/ubicaciones_base.csv")
-        self.df_rutas = gpd.read_file('/vsicurl/https://github.com/gpalomeque/streamlit/blob/main/rutas/data/rtp_shp.zip')
-        self.df_rutas_paradas = gpd.read_file('/vsicurl/https://github.com/gpalomeque/streamlit/blob/main/rutas/data/CConcesionado_Paradas.shp')
-        self.df_base = pd.read_csv('/vsicurl/https://github.com/gpalomeque/streamlit/blob/main/rutas/data/ubicaciones_base.csv')
+        self.df_rutas = gpd.read_file('https://raw.githubusercontent.com/gpalomeque/streamlit/blob/main/rutas/data/CConcesionado_Rutas.zip')
+        self.df_rutas_paradas = gpd.read_file('https://raw.githubusercontent.com/gpalomeque/streamlit/blob/main/rutas/data/CConcesionado_Paradas.shp')
+        self.df_base = pd.read_csv('https://raw.githubusercontent.com/gpalomeque/streamlit/blob/main/rutas/data/ubicaciones_base.csv')
+        
 
     
     def get_rutas(self, claves):
