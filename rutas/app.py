@@ -6,8 +6,6 @@ from shapely.geometry import Point
 import random
 from utils import Rutas
 
-ruta_concesionado = "data/CConcesionado_Rutas.shp"
-ruta_paradas = "data/CConcesionado_Paradas.shp"
 
 ###### funciones
 
@@ -145,8 +143,7 @@ def buscar(latitud,longitud,distancia):
             point_of_interest = (latitud, longitud)
             #st.sidebar.write(latitud + "  ,  " + longitud)
             df_paradas = filter_points(st.session_state.datos_rutas.df_rutas_paradas,point_of_interest,distancia)
-            st.dataframe(df_paradas[["ORIG_DEST","RUTA","UBICACION","NOMENCL","CORREDOR"]])
-
+            st.dataframe(df_paradas[["ORIG_DEST","RUTA","UBICACION","NOMENCL","CORREDOR"]])    
             mapa = folium.Map(location=[latitud, longitud], tiles="OpenStreetMap", zoom_start=15)
     
 
@@ -177,11 +174,37 @@ def buscar(latitud,longitud,distancia):
 
             st_data = st_folium(mapa) 
 
+###### para el st.dataframe de ubicaciones pre-cargadas
+
+def dataframe_with_selections(df):
+    df_with_selections = df.copy()
+    df_with_selections.insert(0, "Select", False)
+
+    # Get dataframe row-selections from user with st.data_editor
+    edited_df = st.data_editor(
+        df_with_selections,
+        hide_index=True,
+        column_config={"Select": st.column_config.CheckboxColumn(required=True)},
+        disabled=df.columns,
+    )
+
+    # Filter the dataframe using the temporary column, then drop the column
+    selected_rows = edited_df[edited_df.Select]
+    print(">>>>>",type(selected_rows))
+    if len(selected_rows.index) > 0:
+        return (selected_rows.iloc[0]['latitud'],selected_rows.iloc[0]['longitud'])
+    else:
+        return 1
+#selected_rows.drop('Select', axis=1)
+
+
+  
+
 
 ###### pagina
 
 if "datos_rutas" not in st.session_state:
-  st.session_state.datos_rutas = Rutas(ruta_concesionado, ruta_paradas)
+  st.session_state.datos_rutas = Rutas()
 
 
 
@@ -193,7 +216,12 @@ st.set_page_config(
 )
 st.title("Rutas-CDMX")
 st.markdown("""Muestra las rutas y paradas cercanas a la ubicación proporcionada.""")
-st.dataframe(st.session_state.datos_rutas.df_base)
+#st.dataframe(st.session_state.datos_rutas.df_base)
+
+selection = dataframe_with_selections(st.session_state.datos_rutas.df_base)
+st.write("Your selection:")
+st.write(selection)          
+
 st.divider()
 
 ### mostrar si se desea seleccionar una ruta
@@ -207,10 +235,18 @@ st.divider()
 # st.write(st.session_state.datos_rutas.get_rutas(option))
 
 
-latitud = st.sidebar.text_input('Latitud')
-longitud = st.sidebar.text_input('Longitud')
+latitud = st.sidebar.text_input('Latitud', key="latitud")
+longitud = st.sidebar.text_input('Longitud',key="longitud")
 distancia = st.sidebar.number_input('Distancia',300)
 #distancia = st.sidebar.text_input('Distancia Máx.',300)
 #19.5782602 , -99.2554378 centro
 #19.4560541702827,-99.17585293990068
 btn_buscar = st.sidebar.button('Buscar',on_click=buscar(latitud,longitud,distancia))
+if selection !=1:
+    a,b=selection
+    #latitud.value=a
+    print(">>>>>",type(latitud))
+    #st.sidebar.text_input('Latitud', key="latitud", value=a)
+    st.sidebar.text_input('Longitud',key="longitud", value=b)
+    buscar(a,b,distancia)
+
