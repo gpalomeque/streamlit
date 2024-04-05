@@ -32,15 +32,12 @@ def buscar(latitud,longitud,distancia):
             #st.sidebar.write(latitud + "  ,  " + longitud)
             df_paradas = filter_points(st.session_state.datos_rutas.df_rutas_paradas,point_of_interest,distancia)
             
-            if "nomencl" not in st.session_state and df_paradas != None:
-                st.session_state.nomencl = Rutas.get_rutas(df_paradas.NOMENCL.unique())
             st.dataframe(df_paradas[["ORIG_DEST","RUTA","UBICACION","NOMENCL","CORREDOR"]])    
             mapa = folium.Map(location=[latitud, longitud], tiles="OpenStreetMap", zoom_start=15)
             type_color = "blue"
             mapa.add_child(
                     folium.Marker(
                         location=point_of_interest,
-                        
                         icon=folium.Icon(color="%s" % type_color),
                     )
                 )
